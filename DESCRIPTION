@@ -1,0 +1,13 @@
+Package: notARMA
+Type: Package
+Title: NOT_ARMA (NOT-ARMA)
+Version: 0.1.1
+Author: Christine Yuen
+Maintainer: Christine Yuen <yuenl@lse.ac.uk>
+BugReports: https://github.com/christineyuen/NOT-ARMA/issues
+Imports: not, stats
+Description: Implementation of NOT-ARMA-1 and NOT-ARMA-2.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
