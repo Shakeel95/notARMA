@@ -53,7 +53,7 @@ get.not.arma.bic.mod <- function(not.mod, is.detrend, return.all.mods = FALSE) {
   }
   
   # return results
-  if(length(result$mod)>1) {
+  if(length(result$mod) > 1) {
     result$cps <- result$arma.mod[[length(result$mod)-1]]$end
   }
   return (result)

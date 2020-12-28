@@ -3,24 +3,29 @@
 ################################
 
 #' NOT-ARMA-1 
-#' @export not.arma.1
+#' @export not_arma_1
 #' @import not
 #' @importFrom stats fitted lm predict
 #' @param d data
 #' @param contrast A type of the contrast function used in the NOT algorithm. Choice of "pcwsConstMean", "pcwsConstMeanHT", "pcwsLinContMean", "pcwsLinMean", "pcwsQuadMean", "pcwsConstMeanVar". See not::not for more details.
-#' @param thr.method Threshold method. Currently only BIC is implemented
+#' @param thr.method Threshold methods, "bic" for bic, "cv.1" for minimum cv mse, "cv.2" for 1se rule
+#' @param num.validate optional, number of validation observations
 #' @return a list with fitted NOT model, change points, BIC value and the threshold in NOT
 #' @examples
 #' \donttest{
 #' d = get.s1.sim(n = 200, cp = 100, intercept = 0, jump.size = 1, sigma = 1, arma.mod = c(0.8, 0.2))$d
-#' not.arma.1(d, contrast = "pcwsConstMean")
+#' not_arma_1(d, contrast = "pcwsConstMean")
 #' }
-not.arma.1 <- function(d, contrast, thr.method = "bic") {
+not_arma_1 <- function(d, contrast, thr.method = "bic", num.validate = round(length(d)*0.15)) {
   not.mod <- get.not.mod(d, contrast)
   if(thr.method == "bic") {
     return (get.not.arma.1.bic.mod(not.mod, return.all.mods = FALSE))
   } else {
-    return (NULL)
+      cv.method <- ifelse(thr.method == "cv.1",1,2)
+      mod <- get.not.arma.1.cv.mod(not.mod = not.mod, cv.method = cv.method, 
+                                   num.validate = num.validate)
+    mod$not.mod <- not.mod
+    return (mod)
   }
 }
 
@@ -34,10 +39,10 @@ not.arma.1 <- function(d, contrast, thr.method = "bic") {
 #' \donttest{
 #' d <- get.s1.sim(n = 200, cp = 100, intercept = 0, jump.size = 1, 
 #' sigma = 1, arma.mod = c(0.8, 0.2))$d
-#' mod <- not.arma.1(d[1:199], contrast = "pcwsConstMean")
+#' mod <- not_arma_1(d[1:199], contrast = "pcwsConstMean")
 #' pred <- predict(mod, 200)
 #' }
-predict.not.arma.1.bic <- function(object, test.i, ...) {
+predict.not.arma.1 <- function(object, test.i, ...) {
   return (get.predict(object$mod, test.i, ...))
 }
 
@@ -85,7 +90,17 @@ get.bic.not.arma.1 <- function(not.arma.1.mod, not.mod) {
 
 get.not.arma.1.bic.mod <- function(not.mod, return.all.mods = FALSE) {
   mod <- get.not.arma.bic.mod(not.mod = not.mod, is.detrend = FALSE, return.all.mods = return.all.mods)
-  class(mod) <- c("not.arma.1.bic")
+  class(mod) <- c("not.arma.1")
+  return (mod)
+}
+
+get.not.arma.1.cv.mod <- function(not.mod, cv.method, num.validate = round(length(not.mod$x)*0.15)) {
+  mod <- get.not.arma.cv.mod(not.mod = not.mod, 
+                             num.validate = num.validate, is.detrend = FALSE, 
+                             cv.method = cv.method, 
+                             validate.fit = NULL,
+                             return.validate.fit = FALSE)
+  class(mod) <- c("not.arma.1")
   return (mod)
 }
 

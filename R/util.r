@@ -28,6 +28,3 @@ get.left.n.right.end.pts <- function(cps, n) {
                right = right.end.pt))
 }
 
-mse.from.pred <- function(pred, test.d) {
-  return (mean((pred-test.d)^2))
-}

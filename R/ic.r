@@ -1,5 +1,5 @@
 ##############################################
-# calculcate the information criteria
+# calculate the information criteria
 ##############################################
 
 get.ic.from.mse <- function(mse, n, p, m, cp.penalty = 1, ic){
